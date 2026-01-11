@@ -41,6 +41,12 @@ jobs:
           api-level: 33
           build-tools: 33.0.2
 
+      # ⚠️ ESTE PASSO É NECESSÁRIO AGORA
+      # Depois que a pasta android/ existir no repositório, REMOVA este bloco
+      - name: Add Android platform
+        run: |
+          npx cap add android
+
       - name: Sync Capacitor Android
         run: |
           npx cap sync android
