@@ -3,6 +3,7 @@ name: Build Android APK
 on:
   push:
     branches:
+      - master
       - main
   workflow_dispatch:
 
@@ -11,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout project
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -20,31 +21,30 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: |
-          npm install --legacy-peer-deps --no-audit --no-fund
+        run: npm install
 
-      - name: Install Capacitor
-        run: npm install @capacitor/cli@5 @capacitor/android@5
-
-      - name: Capacitor Sync Android
-        run: npx cap sync android
+      - name: Build web
+        run: npm run build
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      - name: Grant Gradle permission
-        run: chmod +x android/gradlew
+      - name: Add Android platform
+        run: npx cap add android || true
 
-      - name: Build APK
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Build Debug APK
         run: |
           cd android
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: apk-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
