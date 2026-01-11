@@ -11,12 +11,10 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      # Node.js (use LTS)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
@@ -24,16 +22,11 @@ jobs:
       - name: Build web
         run: npm run build
 
-      # Java antes do Capacitor
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-
-      # Aceitar licenças Android
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
 
       - name: Add Android platform
         run: npx cap add android || true
